@@ -8,6 +8,7 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
+import register from "./controllers/auth.js";
 
 // Configurations
 const __filename = fileURLToPath(import.meta.url);
@@ -39,6 +40,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Routes with Files
+app.post("/auth/register", upload.single("picture"), register);
+
+app.use("/", (req, res) => {
+  res.send("Welcome to Social Media Services");
+});
+
 // Mongoose Setup
 const PORT = process.env.PORT || 6001;
 
@@ -52,4 +60,9 @@ mongoose
       console.log(`Server connected successfully on port ${PORT}`)
     );
   })
+  .then(
+    mongoose.connection.once("open", () => {
+      console.log("MongoDB Connected Successfully");
+    })
+  )
   .catch((error) => console.log(error));
